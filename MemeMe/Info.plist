@@ -35,7 +35,9 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Just Testing</string>
+	<string>MemeMe wants to pick an image from your gallery</string>
+	<key>NSCameraUsageDescription</key>
+	<string>MemeMe wants to take a photo</string>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

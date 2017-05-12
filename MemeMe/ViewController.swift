@@ -123,7 +123,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
                         originalImage: imagePickerView.image!, memedImage: memedImage)
         //save to photo lib
         UIImageWriteToSavedPhotosAlbum(meme.memedImage, nil, nil, nil)
-        //TODO save it into db
     }
     
     
@@ -196,10 +195,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         
         self.view.layoutIfNeeded()
         let scaledFrame = AVMakeRect(aspectRatio: aspectRatioSize, insideRect: imagePickerView.frame)
-        let scale =  max(scaledFrame.size.width / imagePickerView.frame.width, scaledFrame.size.height / imagePickerView.frame.height)
         let margin = scaledFrame.size.height * 0.05
-        topTextField.font = topTextField.font?.withSize(scale * 30)
-        bottomTextField.font = bottomTextField.font?.withSize(scale * 30)
         topTextField.frame.size.width = scaledFrame.width
         bottomTextField.frame.size.width = scaledFrame.width
         topTextField.frame.origin.x = scaledFrame.origin.x
