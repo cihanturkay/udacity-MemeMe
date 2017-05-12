@@ -13,15 +13,15 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     
     @IBOutlet weak var imagePickerView: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
-    @IBOutlet weak var topTextField: UITextField!
-    @IBOutlet weak var bottomTextField: UITextField!
     @IBOutlet weak var shareButton: UIBarButtonItem!
     @IBOutlet weak var cancelButton: UIBarButtonItem!
-    var topTextConstraint: NSLayoutConstraint!
-    var bottomTextConstraint: NSLayoutConstraint!
+    var topTextField: UITextField = UITextField()
+    var bottomTextField: UITextField = UITextField()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(topTextField)
+        view.addSubview(bottomTextField)
         setInitialViewState()
     }
     
@@ -90,87 +90,68 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     //MARK : Helpers
     
     func initTextField(_ textField: UITextField){
-        let memeTextAttributes = [
-            NSStrokeColorAttributeName : UIColor.black,
-            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-            NSForegroundColorAttributeName : UIColor.white,
-            NSStrokeWidthAttributeName : -2.0] as [String : Any]
-        textField.defaultTextAttributes = memeTextAttributes
+        textField.defaultTextAttributes = getTextAttributes(1)
         textField.delegate = self
         textField.textAlignment = NSTextAlignment.center
+        textField.frame.size.height = (textField.text?.size(attributes: textField.defaultTextAttributes).height)!
+        textField.autocapitalizationType = .allCharacters
     }
     
     func setInitialViewState(){
         imagePickerView.image = nil
-        initTextField(topTextField)
-        initTextField(bottomTextField)
         shareButton.isEnabled = false
         cancelButton.isEnabled = false
         topTextField.text = "TOP"
         bottomTextField.text = "BOTTOM"
+        initTextField(topTextField)
+        initTextField(bottomTextField)
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(imagePickerView.frame)
+        print(string)
+        
         return true
     }
     
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.text = ""
+    }
     
     func save(_ memedImage:UIImage) {
         // Create the meme
         let meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!,
                         originalImage: imagePickerView.image!, memedImage: memedImage)
-        //TODO: save will be available for the next version
+        //save to photo lib
+        UIImageWriteToSavedPhotosAlbum(meme.memedImage, nil, nil, nil)
+        //TODO save it into db
     }
     
-
+    
     func generateMemedImage() -> UIImage {
         //Render view to an image
-        // Setup the font specific variables
         let inImage:UIImage = imagePickerView.image!
-        let textColor: UIColor = UIColor.white
-        let textFont: UIFont = UIFont(name: "Helvetica Bold", size: 12)!
-        print(inImage.size)
+        let scaledFrame = AVMakeRect(aspectRatio: inImage.size, insideRect: imagePickerView.bounds)
+        let scale = max(inImage.size.width/scaledFrame.width,inImage.size.height/scaledFrame.height)
         
-        //Setup the image context using the passed image.
         UIGraphicsBeginImageContext(inImage.size)
-        
-        //Setups up the font attributes that will be later used to dictate how the text should be drawn
-        let textFontAttributes = [
-            NSFontAttributeName: textFont,
-            NSForegroundColorAttributeName: textColor,
-            ] as [String : Any]
-        
-        //Put the image into a rectangle as large as the original image.
+        let memeTextAttributes = getTextAttributes(scale)
         inImage.draw(in: CGRect.init(x: 0, y: 0, width: inImage.size.width, height: inImage.size.height))
         
-        // Creating a point within the space that is as bit as the image.
-        let rect:CGRect = CGRect.init(x: 0, y: 0, width: 50, height: 250)
+        var textSize = topTextField.text?.size(attributes: memeTextAttributes)
+        var rect:CGRect = CGRect.init(x: (inImage.size.width - (textSize?.width)!)/2, y: (inImage.size.height * 0.05), width: (textSize?.width)!, height: (textSize?.height)!)
+        topTextField.text?.draw(in: rect, withAttributes: memeTextAttributes)
         
-        //Now Draw the text into an image.
-        "ASSSSSSS".draw(in: rect, withAttributes: textFontAttributes)
+        textSize = bottomTextField.text?.size(attributes: memeTextAttributes)
+        rect = CGRect.init(x: (inImage.size.width - (textSize?.width)!)/2, y: (inImage.size.height * 0.95 - (textSize?.height)!), width: (textSize?.width)!, height: (textSize?.height)!)
+        bottomTextField.text?.draw(in: rect, withAttributes: memeTextAttributes)
         
-        // Create a new image out of the images we have created
         let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        
-        // End the context now that we have the image we need
         UIGraphicsEndImageContext()
         
-        //And pass it back up to the caller.
         return newImage
-        
-        
-//        let scaledFrame = AVMakeRect(aspectRatio: (imagePickerView.image?.size)!, insideRect: imagePickerView.bounds)
-//        UIGraphicsBeginImageContext(scaledFrame)
-//        imagePickerView.drawHierarchy(in: self.imagePickerView.frame, afterScreenUpdates: true)
-//        let memedImage:UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-//        UIGraphicsEndImageContext()
-//        
-//        return memedImage
     }
     
     //MARK : Keyboard Helpers
-    
     func keyboardWillShow(_ notification:Notification) {
         if bottomTextField.isFirstResponder {
             self.view.frame.origin.y = -getKeyboardHeight(notification)
@@ -210,47 +191,33 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         if imagePickerView.image?.size != nil{
             aspectRatioSize = imagePickerView.image?.size
         } else {
-            aspectRatioSize = imagePickerView.bounds.size
+            aspectRatioSize = imagePickerView.frame.size
         }
         
         self.view.layoutIfNeeded()
-        let scaledFrame = AVMakeRect(aspectRatio: aspectRatioSize, insideRect: imagePickerView.bounds)
-        if topTextConstraint != nil {
-            view.removeConstraint(topTextConstraint)
-        }
-        
-        if bottomTextConstraint != nil {
-            view.removeConstraint(bottomTextConstraint)
-        }
-        
-        let margin = scaledFrame.origin.y + scaledFrame.size.height * 0.05
-        
-        
-        //Create and add the new constraints
-        topTextConstraint = NSLayoutConstraint(
-            item: topTextField,
-            attribute: .top,
-            relatedBy: .equal,
-            toItem: imagePickerView,
-            attribute: .top,
-            multiplier: 1.0,
-            constant: margin)
-        view.addConstraint(topTextConstraint)
-        
-        bottomTextConstraint = NSLayoutConstraint(
-            item: bottomTextField,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: imagePickerView,
-            attribute: .bottom,
-            multiplier: 1.0,
-            constant: -margin)
-        view.addConstraint(bottomTextConstraint)
-        
+        let scaledFrame = AVMakeRect(aspectRatio: aspectRatioSize, insideRect: imagePickerView.frame)
+        let scale =  max(scaledFrame.size.width / imagePickerView.frame.width, scaledFrame.size.height / imagePickerView.frame.height)
+        let margin = scaledFrame.size.height * 0.05
+        topTextField.font = topTextField.font?.withSize(scale * 30)
+        bottomTextField.font = bottomTextField.font?.withSize(scale * 30)
+        topTextField.frame.size.width = scaledFrame.width
+        bottomTextField.frame.size.width = scaledFrame.width
+        topTextField.frame.origin.x = scaledFrame.origin.x
+        bottomTextField.frame.origin.x = scaledFrame.origin.x
+        topTextField.frame.origin.y = scaledFrame.origin.y + margin
+        bottomTextField.frame.origin.y = scaledFrame.maxY - margin - bottomTextField.frame.height
         self.view.layoutIfNeeded()
         
     }
-
+    
+    func getTextAttributes(_ scale:CGFloat) -> [String:Any]{
+        return [
+            NSStrokeColorAttributeName : UIColor.black,
+            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: scale * 30)!,
+            NSForegroundColorAttributeName : UIColor.white,
+            NSStrokeWidthAttributeName : -2.0] as [String : Any]
+    }
+    
     
 }
 
