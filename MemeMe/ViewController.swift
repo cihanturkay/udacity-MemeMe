@@ -107,12 +107,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         initTextField(bottomTextField)
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        print(string)
-        
-        return true
-    }
-    
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.text = ""
     }
