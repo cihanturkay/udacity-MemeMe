@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate {
+class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var imagePickerView: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
@@ -17,7 +17,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     @IBOutlet weak var cancelButton: UIBarButtonItem!
     var topTextField: UITextField = UITextField()
     var bottomTextField: UITextField = UITextField()
-    let defaultFontSize:CGFloat = 30
+    let defaultFontSize:CGFloat = 40
     
     
     override func viewDidLoad() {
@@ -100,6 +100,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         textField.frame.size.height = (textField.text?.size(attributes: textField.defaultTextAttributes).height)!
         textField.autocapitalizationType = .allCharacters
         textField.adjustsFontSizeToFitWidth = true
+        textField.minimumFontSize = 10
     }
     
     func setInitialViewState(){
@@ -186,23 +187,27 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     }
     
     func repositionTexts(){
-        var aspectRatioSize:CGSize!
+        view.layoutIfNeeded()
         if imagePickerView.image?.size != nil{
-            aspectRatioSize = imagePickerView.image?.size
+            let aspectRatioSize = imagePickerView.image?.size
+            let scaledFrame = AVMakeRect(aspectRatio: aspectRatioSize!, insideRect: imagePickerView.frame)
+            let margin = scaledFrame.size.height * 0.05
+            topTextField.frame.size.width = scaledFrame.width
+            bottomTextField.frame.size.width = scaledFrame.width
+            topTextField.frame.origin.x = scaledFrame.origin.x
+            bottomTextField.frame.origin.x = scaledFrame.origin.x
+            topTextField.frame.origin.y = scaledFrame.origin.y + margin
+            bottomTextField.frame.origin.y = scaledFrame.maxY - margin - bottomTextField.frame.height
         } else {
-            aspectRatioSize = imagePickerView.frame.size
+            let margin = imagePickerView.frame.size.height * 0.05
+            topTextField.frame.size.width = imagePickerView.frame.width
+            bottomTextField.frame.size.width = imagePickerView.frame.width
+            topTextField.frame.origin.x = imagePickerView.frame.origin.x
+            bottomTextField.frame.origin.x = imagePickerView.frame.origin.x
+            topTextField.frame.origin.y = imagePickerView.frame.origin.y + margin
+            bottomTextField.frame.origin.y = imagePickerView.frame.maxY - margin - bottomTextField.frame.height
         }
-        
-        self.view.layoutIfNeeded()
-        let scaledFrame = AVMakeRect(aspectRatio: aspectRatioSize, insideRect: imagePickerView.frame)
-        let margin = scaledFrame.size.height * 0.05
-        topTextField.frame.size.width = scaledFrame.width
-        bottomTextField.frame.size.width = scaledFrame.width
-        topTextField.frame.origin.x = scaledFrame.origin.x
-        bottomTextField.frame.origin.x = scaledFrame.origin.x
-        topTextField.frame.origin.y = scaledFrame.origin.y + margin
-        bottomTextField.frame.origin.y = scaledFrame.maxY - margin - bottomTextField.frame.height
-        self.view.layoutIfNeeded()
+        view.layoutIfNeeded()
         
     }
     
