@@ -6,7 +6,6 @@
 //  Copyright © 2017 Cihan Turkay. All rights reserved.
 //
 
-import Foundation
 import UIKit
 
 struct Meme {

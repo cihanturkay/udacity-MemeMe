@@ -42,7 +42,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     @IBAction func pickImage(_ sender: UIBarButtonItem) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        imagePicker.sourceType = UIImagePickerControllerSourceType(rawValue: sender.tag)!
+        if sender.tag == UIImagePickerControllerSourceType.camera.rawValue || sender.tag == UIImagePickerControllerSourceType.photoLibrary.rawValue {
+            imagePicker.sourceType = UIImagePickerControllerSourceType(rawValue: sender.tag)!
+        }
         present(imagePicker, animated: true, completion: nil)
     }
     
