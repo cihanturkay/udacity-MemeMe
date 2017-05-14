@@ -17,6 +17,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     @IBOutlet weak var cancelButton: UIBarButtonItem!
     var topTextField: UITextField = UITextField()
     var bottomTextField: UITextField = UITextField()
+    let defaultFontSize:CGFloat = 30
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,6 +97,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         textField.textAlignment = NSTextAlignment.center
         textField.frame.size.height = (textField.text?.size(attributes: textField.defaultTextAttributes).height)!
         textField.autocapitalizationType = .allCharacters
+        textField.adjustsFontSizeToFitWidth = true
     }
     
     func setInitialViewState(){
@@ -127,13 +130,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
         let scale = max(inImage.size.width/scaledFrame.width,inImage.size.height/scaledFrame.height)
         
         UIGraphicsBeginImageContext(inImage.size)
-        let memeTextAttributes = getTextAttributes(scale)
         inImage.draw(in: CGRect.init(x: 0, y: 0, width: inImage.size.width, height: inImage.size.height))
         
+        var memeTextAttributes = getTextAttributes(scale * (topTextField.font?.pointSize)! / defaultFontSize)
         var textSize = topTextField.text?.size(attributes: memeTextAttributes)
         var rect:CGRect = CGRect.init(x: (inImage.size.width - (textSize?.width)!)/2, y: (inImage.size.height * 0.05), width: (textSize?.width)!, height: (textSize?.height)!)
         topTextField.text?.draw(in: rect, withAttributes: memeTextAttributes)
         
+        memeTextAttributes = getTextAttributes(scale * (bottomTextField.font?.pointSize)! / defaultFontSize)
         textSize = bottomTextField.text?.size(attributes: memeTextAttributes)
         rect = CGRect.init(x: (inImage.size.width - (textSize?.width)!)/2, y: (inImage.size.height * 0.95 - (textSize?.height)!), width: (textSize?.width)!, height: (textSize?.height)!)
         bottomTextField.text?.draw(in: rect, withAttributes: memeTextAttributes)
@@ -203,7 +207,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate,UINaviga
     func getTextAttributes(_ scale:CGFloat) -> [String:Any]{
         return [
             NSStrokeColorAttributeName : UIColor.black,
-            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: scale * 30)!,
+            NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: scale * defaultFontSize)!,
             NSForegroundColorAttributeName : UIColor.white,
             NSStrokeWidthAttributeName : -2.0] as [String : Any]
     }
