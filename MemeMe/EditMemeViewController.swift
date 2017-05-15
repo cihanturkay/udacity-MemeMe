@@ -114,7 +114,9 @@ class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.text = ""
+        if textField.text == "TOP" || textField.text == "BOTTOM" {
+            textField.text = ""
+        }
     }
     
     func save(_ memedImage:UIImage) {

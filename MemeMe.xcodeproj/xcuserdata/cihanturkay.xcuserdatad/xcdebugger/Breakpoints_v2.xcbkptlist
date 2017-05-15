@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "MemeMe/EditMemeViewController.swift"
-            timestampString = "516472212.505993"
+            timestampString = "516525980.951039"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
             landmarkName = "repositionTexts()"
             landmarkType = "7">
          </BreakpointContent>
