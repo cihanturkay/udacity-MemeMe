@@ -45,4 +45,17 @@ class MemeTableViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if (editingStyle == UITableViewCellEditingStyle.delete) {
+            memes.remove(at: (indexPath as NSIndexPath).row)
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.memes = memes
+            self.tableView?.reloadData()
+        }
+    }
+    
 }
