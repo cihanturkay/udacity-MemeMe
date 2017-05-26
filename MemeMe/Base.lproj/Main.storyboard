@@ -123,7 +123,7 @@
         <scene sceneID="Wv7-DG-eQA">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yWN-HU-ApU" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="table_30x30" id="1f0-yu-nVb"/>
+                    <tabBarItem key="tabBarItem" title="" image="table" id="1f0-yu-nVb"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="hJN-dt-PBm">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -203,7 +203,7 @@
         <scene sceneID="LTr-ma-xlu">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="oq7-gn-TX4" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="collection_30x30" id="WsP-1u-cPq"/>
+                    <tabBarItem key="tabBarItem" title="" image="collection" id="WsP-1u-cPq"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ODx-XI-WpT">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -295,8 +295,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="collection_30x30" width="30" height="30"/>
-        <image name="table_30x30" width="30" height="30"/>
+        <image name="collection" width="30" height="30"/>
+        <image name="table" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="qlN-WI-R49"/>
