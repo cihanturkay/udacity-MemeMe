@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  CreateMemeViewController.swift
 //  MemeMe
 //
 //  Created by Cihan Turkay on 04/05/2017.
@@ -9,7 +9,7 @@
 import UIKit
 import AVFoundation
 
-class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate {
+class CreateMemeViewController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var imagePickerView: UIImageView!
     @IBOutlet weak var cameraButton: UIBarButtonItem!
@@ -49,7 +49,7 @@ class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     @IBAction func cancel(_ sender: Any) {
-        setInitialViewState()
+        dismiss(animated: true, completion: nil)
     }
     
     @IBAction func shareMeme(_ sender: Any) {
@@ -106,7 +106,6 @@ class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     func setInitialViewState(){
         imagePickerView.image = nil
         shareButton.isEnabled = false
-        cancelButton.isEnabled = false
         topTextField.text = "TOP"
         bottomTextField.text = "BOTTOM"
         initTextField(topTextField)
@@ -123,8 +122,10 @@ class EditMemeViewController: UIViewController, UIImagePickerControllerDelegate,
         // Create the meme
         let meme = Meme(topText: topTextField.text!, bottomText: bottomTextField.text!,
                         originalImage: imagePickerView.image!, memedImage: memedImage)
-        //save to photo lib
-        UIImageWriteToSavedPhotosAlbum(meme.memedImage, nil, nil, nil)
+        //add the sent meme into array
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.memes.append(meme)
+        dismiss(animated: true, completion: nil)
     }
     
     
